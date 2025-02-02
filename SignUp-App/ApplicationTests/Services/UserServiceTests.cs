@@ -23,84 +23,85 @@ public class UserServiceTests
     }
     
     [Test]
-        public async Task SignupAsync_ShouldReturnFailure_WhenPasswordsDoNotMatch()
-        {
-            // Arrange
-            var userSignupDto = new UserSignupDto(
-                "John Doe",
-                "john@example.com",
-                "Password123",
-                "Password12"
-            );
-            // Act
-            var result = await _userService.SignupAsync(userSignupDto);
+    public async Task SignupAsync_ShouldReturnFailure_WhenPasswordsDoNotMatch()
+    {
+        // Arrange
+        var userSignupDto = new UserSignupDto(
+            "John Doe",
+            "john@example.com",
+            "Password123",
+            "Password12"
+        );
+        // Act
+        var result = await _userService.SignupAsync(userSignupDto);
 
-            // Assert
-            result.IsSuccess.Should().BeFalse();  // Should fail
-            result.Error.Should().Be("Passwords do not match");
-        }
+        // Assert
+        result.IsSuccess.Should().BeFalse();  // Should fail
+        result.Error.Should().Be("Passwords do not match");
+    }    
 
-        [Test]
-        public async Task SignupAsync_ShouldReturnFailure_WhenPasswordDoesNotMeetComplexity()
-        {
-            // Arrange
-            var dto = new UserSignupDto(
-                "John Doe",
-                "john@example.com",
-                "weak",  // Not a strong password
-                "weak"
-            );
+    [Test]
+    public async Task SignupAsync_ShouldReturnFailure_WhenPasswordDoesNotMeetComplexity()
+    {
+        // Arrange
+        var dto = new UserSignupDto(
+            "John Doe",
+            "john@example.com",
+            "weak",  // Not a strong password
+            "weak"
+        );
 
-            // Act
-            var result = await _userService.SignupAsync(dto);
+        // Act
+        var result = await _userService.SignupAsync(dto);
 
-            // Assert
-            result.IsSuccess.Should().BeFalse();  // Should fail
-            result.Error.Should().Be("Password does not meet complexity requirements");
-        }
+        // Assert
+        result.IsSuccess.Should().BeFalse();  // Should fail
+        result.Error.Should().Be("Password does not meet complexity requirements");
+    }    
 
-        [Test]
-        public async Task SignupAsync_ShouldReturnFailure_WhenEmailIsAlreadyRegistered()
-        {
-            // Arrange
-            var dto = new UserSignupDto(
-                "John Doe",
-                "john@example.com",
-                "Password123",
-                "Password123"
-            );
+    [Test]
+    public async Task SignupAsync_ShouldReturnFailure_WhenEmailIsAlreadyRegistered()
+    {
+        // Arrange
+        var dto = new UserSignupDto(
+            "John Doe",
+            "john@example.com",
+            "Password123",
+            "Password123"
+        );
 
-            // Mock that the email already exists
-            _userRepository.ExistsAsync(Arg.Any<Email>()).Returns(Task.FromResult(true));
+        // Mock that the email already exists
+        _userRepository.ExistsAsync(Arg.Any<Email>()).Returns(Task.FromResult(true));
 
-            // Act
-            var result = await _userService.SignupAsync(dto);
+        // Act
+        var result = await _userService.SignupAsync(dto);
 
-            // Assert
-            result.IsSuccess.Should().BeFalse();  // Should fail
-            result.Error.Should().Be("Email is already registered");
-        }
+        // Assert
+        result.IsSuccess.Should().BeFalse();  // Should fail
+        result.Error.Should().Be("Email is already registered");
+    }    
 
-        [Test]
-        public async Task SignupAsync_ShouldReturnSuccess_WhenValidData()
-        {
-            // Arrange
-            var dto = new UserSignupDto(
-                "John Doe",
-                "john@example.com",
-                "Password123",
-                "Password123"
-            );
+    [Test]
+    public async Task SignupAsync_ShouldReturnSuccess_WhenValidData()
+    {
+        // Arrange
+        var dto = new UserSignupDto(
+            "John Doe",
+            "john@example.com",
+            "Password123",
+            "Password123"
+        );
 
-            // Mock repository methods and password hasher
-            _userRepository.ExistsAsync(Arg.Any<Email>()).Returns(Task.FromResult(false));  // Email not registered
-            _passwordHasher.HashPassword(Arg.Any<string>()).Returns("hashedPassword");
+        // Mock repository methods and password hasher
+        _userRepository.ExistsAsync(Arg.Any<Email>()).Returns(Task.FromResult(false));  // Email not registered
+        _passwordHasher.HashPassword(Arg.Any<string>()).Returns("hashedPassword");
 
-            // Act
-            var result = await _userService.SignupAsync(dto);
+        // Act
+        var result = await _userService.SignupAsync(dto);
 
-            // Assert
-            result.IsSuccess.Should().BeTrue();  // Should succeed
-            result.Value.Should().NotBeEmpty();  // Should return a valid GUID (user ID)
-        }
+        // Assert
+        result.IsSuccess.Should().BeTrue();  // Should succeed
+        result.Value.Should().NotBeEmpty();  // Should return a valid GUID (user ID)
+    }    
+        
 }
