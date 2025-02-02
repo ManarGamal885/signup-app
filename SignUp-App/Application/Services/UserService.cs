@@ -9,6 +9,7 @@ namespace Application.Services
 {
     public class UserService : IUserService
     {
+        //Injecting the needed services.
         private readonly IUserRepository _userRepository;
         private readonly IPasswordHasher _passwordHasher;
 
@@ -22,19 +23,25 @@ namespace Application.Services
         {
             // Validate passwords match
             if (dto.Password != dto.ConfirmPassword)
+            {
                 return Result<Guid>.Failure("Passwords do not match");
-
+            }
+            
             // Validate password strength
             if (!IsPasswordStrong(dto.Password))
+            {
                 return Result<Guid>.Failure("Password does not meet complexity requirements");
-
+            }
+            
             try
             {
                 var email = Email.Create(dto.Email);
 
                 // Check if email is already registered
                 if (await _userRepository.ExistsAsync(email))
+                {
                     return Result<Guid>.Failure("Email is already registered");
+                }
 
                 var passwordHash = _passwordHasher.HashPassword(dto.Password);
                 var user = User.Create(dto.FullName, email, passwordHash);

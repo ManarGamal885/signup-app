@@ -1,7 +1,7 @@
 using Application.Interfaces;
 using Application.Services;
 using Domain.Interfaces;
-using Infrastructure.Contexts;
+using Infrastructure.Data.Contexts;
 using Infrastructure.Repositories;
 using Infrastructure.Security;
 using Microsoft.AspNetCore.Identity;
@@ -9,38 +9,30 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Configure Services.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
+// Dependency Injection.
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-//Add the DbContext to the services container with the connection string from appsettings.json
+
+
+// Database Configuration.
 builder.Services.AddDbContext<UserManagementContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Middleware Configuration.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
-    
-    // Redirect root URL to Swagger when in development mode as a custom middleware
-    app.Use(async (context, next) =>
-    {
-        if (context.Request.Path == "/")
-        {
-            context.Response.Redirect("/swagger");
-            return;
-        }
-        await next();
-    });
 }
 
 app.UseHttpsRedirection();

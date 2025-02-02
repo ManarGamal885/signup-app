@@ -21,4 +21,8 @@
     <ItemGroup>
       <Folder Include="Data\" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Data\Migratinos\UserManagementContextModelSnapshot.cs" />
+    </ItemGroup>
 </Project>

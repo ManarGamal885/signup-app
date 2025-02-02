@@ -9,7 +9,8 @@ public class Email
     {
         Value = value;
     }
-
+    
+    // Factory method to create an Email instance.
     public static Email Create(string email)
     {
         if (string.IsNullOrWhiteSpace(email))
@@ -25,7 +26,7 @@ public class Email
         return new Email(email);
     }
     
-    //Validate the Email format.
+    // Validate the Email format.
     private static bool IsValidEmail(string email)
     {
         try
